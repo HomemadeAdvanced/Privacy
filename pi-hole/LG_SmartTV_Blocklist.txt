@@ -343,14 +343,9 @@ ad.leadboltapps.net
 ad.leadboltmobile.net
 ad.letsbonus.com
 ad.lfstmedia.com
-*.rdx2.lgtvsdp.com
-*.lgtvsdp.com
-*.info.lgsmartad.com
-*.ibs.lgappstv.com
 ad.lgappstv.com
 smartshare.lgtvsdp.com
 ibis.lgappstv.com
-*.ad.lgsmartad.com
 lgad.cjpowercast.com.edgesuite.net
 lgad.cjpowercast.com
 edgesuite.net
@@ -362,7 +357,6 @@ tom.itv.com
 toots-a.akamaihd.net
 captive.roku.com
 victoria.logs.roku.com
-*.roku.com
 nqs.nice264.com
 mtv.hb.omtrdc.net
 jwpltx.com
