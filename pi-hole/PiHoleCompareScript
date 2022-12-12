@@ -1,38 +1,24 @@
 #!/bin/bash
 
-# Speichere alle URLs der pihole adlists in einem Array
-adlists=($(pihole -g | grep "url" | cut -d "=" -f 2))
+# Dieses Skript vergleicht alle PiHole Adlisten und gibt diejenigen aus, die keine einzigartigen Domains enthalten.
 
-# Iteriere über alle adlists
-for adlist in "${adlists[@]}"; do
-    # Speichere die Domains der aktuellen adlist in einem Array
-    domains=($(curl -s $adlist | grep -oP "^[^#]*" | awk '{print $2}'))
+# Schritt 1: Laden Sie die PiHole-Adlisten in Arrays
+adlists=($(pihole -g))
 
-    # Iteriere über alle anderen adlists
-    for compare_adlist in "${adlists[@]}"; do
-        # Überspringe die aktuelle adlist
-        if [[ $adlist == $compare_adlist ]]; then
-            continue
-        fi
+# Schritt 2: Vergleichen Sie die Arrays, um die Adlisten zu finden, die keine einzigartigen Domains enthalten
+for ((i=0; i<${#adlists[@]}; i++))
+do
+  for ((j=i+1; j<${#adlists[@]}; j++))
+  do
+    # Verwenden Sie die "comm" -Funktion, um die Adlisten zu vergleichen und nur die gemeinsamen Domains auszugeben
+    # Speichern Sie das Ergebnis in einem temporären Array
+    temp_array=($(comm -12 <(echo "${adlists[i]}") <(echo "${adlists[j]}")))
 
-        # Speichere die Domains der zu vergleichenden adlist in einem Array
-        compare_domains=($(curl -s $compare_adlist | grep -oP "^[^#]*" | awk '{print $2}'))
-
-        # Prüfe, ob die Domains der aktuellen adlist in der zu vergleichenden vorkommen
-        unique=true
-        for domain in "${domains[@]}"; do
-            if grep -q $domain <<< "${compare_domains[@]}"; then
-                unique=false
-                break
-            fi
-        done
-
-        # Wenn die Domains der aktuellen adlist nicht in der zu vergleichenden vorkommen, gehe zur nächsten adlist
-        if $unique; then
-            continue
-        fi
-
-        # Wenn die Domains der aktuellen adlist in der zu vergleichenden vorkommen, gib die adlist aus
-        echo $adlist
-    done
+    # Wenn das temporäre Array keine Elemente enthält, bedeutet dies, dass die Adlisten keine gemeinsamen Domains enthalten
+    if [ ${#temp_array[@]} -eq 0 ]
+    then
+      # Geben Sie die Adlisten aus, die keine gemeinsamen Domains enthalten
+      echo "Die Adlisten ${adlists[i]} und ${adlists[j]} enthalten keine gemeinsamen Domains."
+    fi
+  done
 done
