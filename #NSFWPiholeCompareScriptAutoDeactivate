@@ -1,6 +1,3 @@
-Schreibe ein Bash Script, dass alle pihole adlisten miteinander vergleicht und alle redundanten Listen ohne einzigartige Domains angibt und fragt, ob die Filterlisten deaktiviert oder gelöscht werden sollen.
-Ergänze das folgende unvollständige Skript. Schreibe statt des hier aufgeführten teils [...]
-
 #!/bin/bash
 
 # Funktion zum Vergleichen von Listen
