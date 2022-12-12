@@ -1,33 +1,27 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python
 
 # This script compares all pihole adlists and outputs any lists that are redundant
 # (contain no unique domains)
 
-# Get a list of all adlists
-adlists=(/etc/pihole/adlists.list/*)
+import os
 
-# Create a dictionary to keep track of the unique domains in each adlist
-declare -A unique_domains
+# First, get a list of all adlists
+adlists = os.listdir("/etc/pihole/adlists.list")
+
+# Next, create a dictionary to keep track of the unique domains in each adlist
+unique_domains = {}
 
 # For each adlist, read in the domains and add them to the dictionary
-for adlist in "${adlists[@]}"; do
-  while read -r domain; do
-    # If this is the first time we've seen this domain, initialize an empty
-    # array to hold the adlists that contain it
-    if [[ ! ${unique_domains[$domain]} ]]; then
-      unique_domains[$domain]=()
-    fi
+for adlist in adlists:
+  with open("/etc/pihole/adlists.list/" + adlist) as f:
+    for line in f:
+      domain = line.strip()
+      if domain not in unique_domains:
+        unique_domains[domain] = []
+      unique_domains[domain].append(adlist)
 
-    # Add this adlist to the list of adlists that contain this domain
-    unique_domains[$domain]+=($adlist)
-  done < $adlist
-done
-
-# Go through the dictionary and print any adlists that have no unique domains
-for domain in "${!unique_domains[@]}"; do
-  # If this domain appears in more than one adlist, those adlists are redundant
-  if (( ${#unique_domains[$domain]} > 1 )); then
-    echo "The following adlists are redundant:"
-    printf '%s\n' "${unique_domains[$domain]}"
-  fi
-done
+# Finally, go through the dictionary and print any adlists that have no unique domains
+for domain, adlists in unique_domains.items():
+  if len(adlists) > 1:
+    print("The following adlists are redundant:")
+    print(", ".join(adlists))
