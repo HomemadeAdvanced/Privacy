@@ -1,0 +1,55 @@
+Schreibe ein Bash Script, dass alle pihole adlisten miteinander vergleicht und alle redundanten Listen ohne einzigartige Domains angibt und fragt, ob die Filterlisten deaktiviert oder gelöscht werden sollen.
+Ergänze das folgende unvollständige Skript. Schreibe statt des hier aufgeführten teils [...]
+
+#!/bin/bash
+
+# Funktion zum Vergleichen von Listen
+compare_lists() {
+  # Lese alle Zeilen aus erster Liste in ein Array
+  readarray -t list1 < $1
+
+  # Lese alle Zeilen aus zweiter Liste in ein Array
+  readarray -t list2 < $2
+
+  # Vergleiche beide Listen und speichere übereinstimmende Zeilen in einem Array
+  common_lines=()
+  for line1 in "${list1[@]}"; do
+    for line2 in "${list2[@]}"; do
+      if [ "$line1" == "$line2" ]; then
+        common_lines+=("$line1")
+      fi
+    done
+  done
+
+  # Gib übereinstimmende Zeilen aus
+  echo "Die folgenden Zeilen sind in beiden Listen enthalten:"
+  for line in "${common_lines[@]}"; do
+    echo "  $line"
+  done
+
+  # Frage, ob Listen deaktiviert oder gelöscht werden sollen
+  read -p "Sollen diese Listen deaktiviert oder gelöscht werden? [d/l] " action
+  if [ "$action" == "d" ]; then
+    # Deaktiviere Listen
+    echo "Listen werden deaktiviert"
+  elif [ "$action" == "l" ]; then
+    # Lösche Listen
+    echo "Listen werden gelöscht"
+  else
+    # Unbekannte Eingabe
+    echo "Ungültige Eingabe"
+  fi
+}
+
+# Pfad zu pihole-adlists
+adlist_dir="/etc/pihole/adlists.list"
+
+# Lese alle Filterlisten aus
+adlists=()
+while read -r adlist; do
+  adlists+=("$adlist")
+done < "$adlist_dir"
+
+# Vergleiche alle Filterlisten miteinander
+for (( i=0; i<${#adlists[@]}-1; i++ )); do
+  for (( j=i+1;
