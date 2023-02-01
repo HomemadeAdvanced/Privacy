@@ -1,3 +1,3 @@
 # Privacy
 
-Archived and moved to Codeberg: https://https://codeberg.org/HomemadeAdvanced
+Archived and moved to Codeberg: https://codeberg.org/HomemadeAdvanced
